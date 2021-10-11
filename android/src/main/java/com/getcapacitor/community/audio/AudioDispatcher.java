@@ -1,5 +1,6 @@
 package com.getcapacitor.community.audio;
 
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
@@ -25,18 +26,16 @@ public class AudioDispatcher
   private int mediaState;
   private AudioAsset owner;
 
-  public AudioDispatcher(AssetFileDescriptor assetFileDescriptor, float volume)
+  public AudioDispatcher(Context ctx, int resRawId, float volume)
     throws Exception {
     mediaState = INVALID;
 
-    mediaPlayer = new MediaPlayer();
+    mediaPlayer = MediaPlayer.create(ctx, resRawId);
+    // create() also prepares()
+    mediaState = PREPARED;
+
     mediaPlayer.setOnCompletionListener(this);
     mediaPlayer.setOnPreparedListener(this);
-    mediaPlayer.setDataSource(
-      assetFileDescriptor.getFileDescriptor(),
-      assetFileDescriptor.getStartOffset(),
-      assetFileDescriptor.getLength()
-    );
     mediaPlayer.setOnSeekCompleteListener(this);
     mediaPlayer.setAudioAttributes(
       new AudioAttributes.Builder()
@@ -45,7 +44,6 @@ public class AudioDispatcher
         .build()
     );
     mediaPlayer.setVolume(volume, volume);
-    mediaPlayer.prepare();
   }
 
   public void setOwner(AudioAsset asset) {

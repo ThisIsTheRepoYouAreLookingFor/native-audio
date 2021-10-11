@@ -1,5 +1,6 @@
 package com.getcapacitor.community.audio;
 
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import com.getcapacitor.JSObject;
 import java.util.ArrayList;
@@ -15,9 +16,10 @@ public class AudioAsset {
   private NativeAudio owner;
 
   AudioAsset(
+    Context ctx,
     NativeAudio owner,
     String assetId,
-    AssetFileDescriptor assetFileDescriptor,
+    int resRawId,
     int audioChannelNum,
     float volume
   )
@@ -32,7 +34,8 @@ public class AudioAsset {
 
     for (int x = 0; x < audioChannelNum; x++) {
       AudioDispatcher audioDispatcher = new AudioDispatcher(
-        assetFileDescriptor,
+        ctx,
+        resRawId,
         volume
       );
       audioList.add(audioDispatcher);

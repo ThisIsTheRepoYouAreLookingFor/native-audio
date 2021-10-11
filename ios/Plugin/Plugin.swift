@@ -236,6 +236,9 @@ public class NativeAudio: CAPPlugin {
                     } else {
                         call.error(Constant.ErrorAssetPath + " - " + assetPath)
                     }
+                } else {
+                    // asset already loaded
+                    call.success();
                 }
             }
         }

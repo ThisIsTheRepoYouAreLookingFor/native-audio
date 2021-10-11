@@ -391,6 +391,13 @@ public class NativeAudio
           audioChannelNum = call.getInt(AUDIO_CHANNEL_NUM);
         }
 
+        
+        Context ctx = getBridge().getActivity().getApplicationContext();
+        int resRawId = ctx.getResources().getIdentifier(fullPath, "raw", ctx.getPackageName());
+        Log.d(
+          TAG,
+          "Resource raw Id: " + resRawId
+        );
         AssetFileDescriptor assetFileDescriptor;
         if (isUrl) {
           File f = new File(new URI(fullPath));
@@ -399,16 +406,13 @@ public class NativeAudio
             ParcelFileDescriptor.MODE_READ_ONLY
           );
           assetFileDescriptor = new AssetFileDescriptor(p, 0, -1);
-        } else {
-          Context ctx = getBridge().getActivity().getApplicationContext();
-          AssetManager am = ctx.getResources().getAssets();
-          assetFileDescriptor = am.openFd(fullPath);
         }
 
         AudioAsset asset = new AudioAsset(
+          ctx,
           this,
           audioId,
-          assetFileDescriptor,
+          resRawId,
           audioChannelNum,
           (float) volume
         );
@@ -422,6 +426,7 @@ public class NativeAudio
       }
     } catch (Exception ex) {
       call.reject(ex.getMessage());
+      Log.e(TAG, ex.getMessage(), ex);
     }
   }
 
